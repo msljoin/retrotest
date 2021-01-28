@@ -1,7 +1,5 @@
 package com.msl.retrotest;
 
-import android.text.format.Time;
-
 import com.msl.retrotest.utils.Constants;
 import com.msl.retrotest.utils.PlaceHolderApi;
 
