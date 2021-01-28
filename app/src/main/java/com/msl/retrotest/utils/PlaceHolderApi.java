@@ -1,5 +1,6 @@
 package com.msl.retrotest.utils;
 
+import com.msl.retrotest.entity.Comments;
 import com.msl.retrotest.entity.Post;
 
 import java.util.List;
@@ -16,8 +17,16 @@ public interface PlaceHolderApi {
 
     // Select all posts from web service
     @GET("/posts")
-    Call<List<Post>> getPosts(@Query("id") int after, @Query("id") int before);
+    Call<List<Post>> getPosts(@Query("userId") int [] userId,
+                              @Query("_sort") String sort,
+                              @Query("_order") String oder);
 
     @GET("/posts")
     Call<List<Post>> getPosts();
+
+    @GET("/posts/{id}/comments")
+    Call<List<Comments>> getComments(@Query("userId") int userId,
+                                     @Query("sort") String sort,
+                                     @Query("order") String oder
+    );
 }

@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.msl.retrotest.R;
+import com.msl.retrotest.entity.Comments;
 import com.msl.retrotest.entity.Post;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.POST;
 
-public class MainActivity extends AppCompatActivity implements Callback<List<Post>> {
+public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
 
@@ -29,40 +30,81 @@ public class MainActivity extends AppCompatActivity implements Callback<List<Pos
 
         textView = findViewById(R.id.textView1);
 
+//        getComments();
+        getSortPosts();
+//        selectPostById();
+    }
+
+    private void getSortPosts() {
         // Call retrofit service to get post from API
         NetworkService.getInstance()
                 .getJsonApi()
-                .getPosts()
-                .enqueue(this);
+                .getPosts(new int[] {1,2,4},"id", "desc")
+                .enqueue(new Callback<List<Post>>() {
+                    @Override
+                    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+
+                        if (response.isSuccessful()) {
+
+                            List<Post> posts = response.body();
+
+                            if ( posts == null) {
+                                return;
+                            }
+
+                            for (Post post : posts) {
+                                String content = "";
+                                content+= "Id = " + post.getId() + "\n";
+                                content+= "userId = " + post.getUserId() + "\n";
+                                content+= "title = " + post.getTitle() + "\n";
+                                content+= "body = " + post.getBody() + "\n" + "\n";
+
+                                textView.append(content);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Post>> call, Throwable t) {
+                        t.printStackTrace();
+                        textView.setText(t.getMessage());
+                    }
+                });
     }
 
-    @Override
-    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+    private void getComments() {
+        NetworkService.getInstance()
+                .getJsonApi()
+                .getComments(1,"id","desc")
+                .enqueue(new Callback<List<Comments>>() {
+            @Override
+            public void onResponse(Call<List<Comments>> call, Response<List<Comments>> response) {
+                if (response.isSuccessful()) {
 
-        if (response.isSuccessful()) {
+                    List<Comments> comments = response.body();
 
-            List<Post> posts = response.body();
+                    if (comments == null) {
+                        return;
+                    }
 
-            if ( posts == null) {
-                return;
+                    for (Comments comment : comments) {
+                        String content = "";
+                        content+= "Id = " + comment.getId() + "\n";
+                        content+= "postId = " + comment.getPostId() + "\n";
+                        content+= "title = " + comment.getName() + "\n";
+                        content+= "body = " + comment.getEmail() + "\n";
+                        content+= "body = " + comment.getBody()+ "\n" + "\n";
+
+                        textView.append(content);
+                    }
+                }
             }
 
-            for (Post post : posts) {
-                String content = "";
-                content+= "Id = " + post.getId() + "\n";
-                content+= "userId = " + post.getUserId() + "\n";
-                content+= "title = " + post.getTitle() + "\n";
-                content+= "body = " + post.getBody() + "\n" + "\n";
+            @Override
+            public void onFailure(Call<List<Comments>> call, Throwable t) {
 
-                textView.append(content);
             }
-        }
-    }
-
-    @Override
-    public void onFailure(Call<List<Post>> call, Throwable t) {
-        t.printStackTrace();
-        textView.setText(t.getMessage());
+        });
     }
 
     private void selectPostById() {
