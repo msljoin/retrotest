@@ -11,7 +11,7 @@ public class Post {
 
     @SerializedName("id")
     @Expose
-    private int id;
+    private Integer id;
 
     @SerializedName("title")
     @Expose
@@ -50,6 +50,12 @@ public class Post {
     }
 
     public void setBody(String body) {
+        this.body = body;
+    }
+
+    public Post(int userId, String title, String body) {
+        this.userId = userId;
+        this.title = title;
         this.body = body;
     }
 }

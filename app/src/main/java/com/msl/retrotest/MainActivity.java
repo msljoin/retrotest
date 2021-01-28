@@ -11,7 +11,9 @@ import com.msl.retrotest.R;
 import com.msl.retrotest.entity.Comments;
 import com.msl.retrotest.entity.Post;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -31,8 +33,48 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView1);
 
 //        getComments();
-        getSortPosts();
+//        getSortPosts();
 //        selectPostById();
+        createPost();
+    }
+
+    private void createPost() {
+        Post post = new Post(23, "Title", "Text Qwerty");
+
+        Map<String,String> fields = new HashMap<>();
+        fields.put("userId", "25");
+        fields.put("title",  "New");
+
+        NetworkService
+                .getInstance()
+                .getJsonApi()
+                .createPost(fields)
+                .enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, Response<Post> response) {
+                        if (response.isSuccessful()) {
+                            Post post = response.body();
+
+                            if ( post == null) {
+                                return;
+                            }
+
+                            String content = "";
+                            content+= "Code:" + response.code() + "\n";
+                            content+= "Id = " + post.getId() + "\n";
+                            content+= "userId = " + post.getUserId() + "\n";
+                            content+= "title = " + post.getTitle() + "\n";
+                            content+= "body = " + post.getBody() + "\n" + "\n";
+
+                            textView.setText(content);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+
+                    }
+                });
     }
 
     private void getSortPosts() {
