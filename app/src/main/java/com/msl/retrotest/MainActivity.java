@@ -35,7 +35,65 @@ public class MainActivity extends AppCompatActivity {
 //        getComments();
 //        getSortPosts();
 //        selectPostById();
-        createPost();
+//        createPost();
+//        updatePost();
+//        deletePost();
+    }
+
+    private void deletePost() {
+
+        NetworkService
+                .getInstance()
+                .getJsonApi()
+                .deletePost(5)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        textView.setText(response.code());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+    }
+
+    private void updatePost() {
+
+        Post post = new Post(12,null,"New body");
+
+        NetworkService
+                .getInstance()
+                .getJsonApi()
+                .patchPost(5,post)
+                .enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, Response<Post> response) {
+
+                        if (response.isSuccessful()) {
+                            Post post = response.body();
+
+                            if ( post == null) {
+                                return;
+                            }
+
+                            String content = "";
+                            content+= "Code:" + response.code() + "\n";
+                            content+= "Id = " + post.getId() + "\n";
+                            content+= "userId = " + post.getUserId() + "\n";
+                            content+= "title = " + post.getTitle() + "\n";
+                            content+= "body = " + post.getBody() + "\n" + "\n";
+
+                            textView.setText(content);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+
+                    }
+                });
     }
 
     private void createPost() {
