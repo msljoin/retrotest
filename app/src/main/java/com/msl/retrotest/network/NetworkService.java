@@ -2,6 +2,7 @@ package com.msl.retrotest.network;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.msl.retrotest.BuildConfig;
 import com.msl.retrotest.utils.Constants;
 import com.msl.retrotest.utils.PlaceHolderApi;
 
@@ -26,7 +27,9 @@ public class NetworkService {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         // set level of logging
         // BODY to show request content
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        if (BuildConfig.DEBUG) {
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        }
         // initialize okhttp instance
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(10, TimeUnit.SECONDS)
