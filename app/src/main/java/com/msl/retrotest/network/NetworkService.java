@@ -1,5 +1,7 @@
 package com.msl.retrotest.network;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.msl.retrotest.utils.Constants;
 import com.msl.retrotest.utils.PlaceHolderApi;
 
@@ -32,12 +34,17 @@ public class NetworkService {
                 .addInterceptor(httpLoggingInterceptor)
                 .build();
 
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                .setVersion(1.2)
+                .create();
+
         // building retrofit instance by Builder
         mRetrofit = new Retrofit.Builder()
                 // generate url
                 .baseUrl(Constants.URL)
                 // json converter
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 // add okhttp
                 .client(client)
                 // add all options

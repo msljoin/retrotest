@@ -1,23 +1,15 @@
 package com.msl.retrotest;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.msl.retrotest.entity.Comments;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.msl.retrotest.entity.Post;
 import com.msl.retrotest.network.NetworkService;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -51,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NotNull Call<Post> call, @NotNull Response<Post> response) {
                         // condition if request was good
-                        if (response.isSuccessful()) {
+                        runOnUiThread(() -> {
+                            if (!response.isSuccessful()) {
+                                return;
+                            }
                             // in object assign request body
                             Post post = response.body();
                             // from post have access to methods
@@ -59,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
                             textView.append(post.getId() + "\n");
                             textView.append(post.getTitle() + "\n");
                             textView.append(post.getBody() + "\n");
-                        }
+                        });
+
 //                        try {
 //                            JSONObject jsonObject = new JSONObject(new Gson().toJson(response.body()));
 //                            Log.i("jsonObject", jsonObject.getString("title"));
